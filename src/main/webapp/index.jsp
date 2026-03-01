@@ -84,10 +84,10 @@
                         <div class="form-group">
                             <label>Room Type</label>
                             <select id="roomType" required>
-                                <option value="Single">Single (Rs.100/night)</option>
-                                <option value="Double">Double (Rs.150/night)</option>
-                                <option value="Deluxe">Deluxe (Rs.250/night)</option>
-                                <option value="Suite">Suite (Rs.400/night)</option>
+                                <option value="Single">Single (Rs.1000/night)</option>
+                                <option value="Double">Double (Rs.1500/night)</option>
+                                <option value="Deluxe">Deluxe (Rs.2500/night)</option>
+                                <option value="Suite">Suite (Rs.4000/night)</option>
                             </select>
                         </div>
                         <div class="form-group">
@@ -188,8 +188,7 @@
 
                     <div class="staff-controls" style="margin-top: 20px;">
                         <h3>Add New Staff Member</h3>
-                        <form id="add-staff-form" class="inline-form"
-                            style="margin-bottom: 20px; display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
+                        <form id="add-staff-form" class="inline-form">
                             <input type="text" id="new-staff-username" placeholder="Username" required>
                             <input type="password" id="new-staff-password" placeholder="Password" required>
                             <input type="email" id="new-staff-email" placeholder="Email" required>
@@ -269,5 +268,6 @@
             </script>
             <script src="${pageContext.request.contextPath}/app.js"></script>
         </body>
+
 
         </html>
