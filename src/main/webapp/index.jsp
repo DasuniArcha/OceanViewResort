@@ -55,7 +55,9 @@
                         <button class="menu-btn" data-target="help-section">4. Help Section</button>
                         <button class="menu-btn hidden" id="admin-manage-btn" data-target="staff-mgmt-section">5. Manage
                             Staff (Admin)</button>
-                        <button class="menu-btn btn-danger" id="exit-btn">6. Exit System</button>
+                        <button class="menu-btn hidden" id="generate-reports-btn" data-target="reports-section">6.
+                            Generate Reports (Admin)</button>
+                        <button class="menu-btn btn-danger" id="exit-btn">7. Exit System</button>
                     </div>
                 </section>
 
@@ -232,6 +234,17 @@
                     </div>
                 </div>
 
+                <!-- Admin Reports Section -->
+                <section id="reports-section" class="hidden glass-panel">
+                    <h2>Admin Reservation Reports</h2>
+                    <button class="back-btn btn-secondary">Back to Menu</button>
+
+                    <div id="reports-result" class="result-box" style="margin-top: 20px;">
+                        <!-- Reports data will be injected here -->
+                        <p>Loading report data...</p>
+                    </div>
+                </section>
+
                 <!-- Help Section -->
                 <section id="help-section" class="hidden glass-panel">
                     <h2>Help & Instructions</h2>
@@ -269,5 +282,6 @@
             </script>
             <script src="${pageContext.request.contextPath}/app.js"></script>
         </body>
+
 
         </html>
