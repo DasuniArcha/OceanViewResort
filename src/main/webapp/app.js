@@ -223,6 +223,131 @@ document.getElementById('add-staff-form').addEventListener('submit', async (e) =
     }
 });
 
+// Admin Reports Logic
+document.getElementById('generate-reports-btn').addEventListener('click', () => {
+    generateReports();
+});
+
+async function generateReports() {
+    try {
+        const res = await fetch(`${apiBase}/reports`);
+        const data = await res.json();
+        const box = document.getElementById('reports-result');
+
+        if (data.success) {
+            let roomStatsHtml = data.roomStats.map(s => `
+                <div class="stat-pill">
+                    <strong>${s.roomType}:</strong> ${s.count} bookings
+                </div>
+            `).join('');
+
+            box.innerHTML = `
+                <div class="report-dashboard">
+                    <div class="main-stats">
+                        <div class="stat-card">
+                            <span class="stat-label">Total Revenue</span>
+                            <span class="stat-value">Rs.${data.totalRevenue.toLocaleString()}</span>
+                        </div>
+                        <div class="stat-card">
+                            <span class="stat-label">Total Reservations</span>
+                            <span class="stat-value">${data.totalReservations}</span>
+                        </div>
+                    </div>
+                    <div class="room-stats">
+                        <h4>Occupancy by Room Type</h4>
+                        <div class="stats-grid">
+                            ${roomStatsHtml || '<p>No data available.</p>'}
+                        </div>
+                    </div>
+                </div>
+            `;
+            showSection('reports-section');
+        } else {
+            showMessage(data.message, 'error');
+        }
+    } catch (err) {
+        showMessage('Error generating report.', 'error');
+    }
+}
+
+async function loadStaffList() {
+    try {
+        const res = await fetch(`${apiBase}/staff`);
+        const data = await res.json();
+        const container = document.getElementById('staff-table-container');
+
+        if (data.success) {
+            if (data.staff.length === 0) {
+                container.innerHTML = '<p>No staff members found.</p>';
+                return;
+            }
+
+            let html = '<table class="staff-table"><thead><tr><th>Username</th><th>Email</th><th>Action</th></tr></thead><tbody>';
+            data.staff.forEach(s => {
+                html += `
+                    <tr>
+                        <td>${s.username}</td>
+                        <td>${s.email || '-'}</td>
+                        <td>
+                            <button class="btn-primary small-btn" onclick="openEditStaffModal(${JSON.stringify(s).replace(/"/g, '&quot;')})">Edit</button>
+                            <button class="btn-danger small-btn" onclick="deleteStaff(${s.id})">Remove</button>
+                        </td>
+                    </tr>
+                `;
+            });
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        } else {
+            container.innerHTML = `<p class="error">${data.message}</p>`;
+        }
+    } catch (err) {
+        document.getElementById('staff-table-container').innerHTML = '<p class="error">Error loading staff list.</p>';
+    }
+}
+
+window.deleteStaff = async (id) => {
+    if (!confirm('Are you sure you want to remove this staff member?')) return;
+
+    try {
+        const res = await fetch(`${apiBase}/staff?id=${id}`, { method: 'DELETE' });
+        const data = await res.json();
+        if (data.success) {
+            showMessage(data.message);
+            loadStaffList();
+        } else {
+            showMessage(data.message, 'error');
+        }
+    } catch (err) {
+        showMessage('Error deleting staff.', 'error');
+    }
+};
+
+document.getElementById('add-staff-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const u = document.getElementById('new-staff-username').value;
+    const p = document.getElementById('new-staff-password').value;
+    const emailStr = document.getElementById('new-staff-email').value;
+
+    try {
+        const res = await fetch(`${apiBase}/staff`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username: u, password: p, email: emailStr })
+        });
+        const data = await res.json();
+        if (data.success) {
+            showMessage(data.message);
+            document.getElementById('add-staff-form').reset();
+            loadStaffList();
+        } else {
+            showMessage(data.message, 'error');
+        }
+    } catch (err) {
+        showMessage('Error adding staff.', 'error');
+    }
+});
+
+
 // Edit Staff Logic
 window.openEditStaffModal = (staff) => {
     document.getElementById('edit-staff-id').value = staff.id;
@@ -472,3 +597,4 @@ document.getElementById('bill-form').addEventListener('submit', async (e) => {
 document.getElementById('print-bill-btn').addEventListener('click', () => {
     window.print();
 });
+
